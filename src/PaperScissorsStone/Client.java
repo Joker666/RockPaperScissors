@@ -2,42 +2,33 @@ package PaperScissorsStone;
 
 import java.io.*;
 import java.net.*;
+import java.util.Scanner;
 
 class Client {
-    private static final String host = "localhost";
-    private static final Integer port = 9090;
-
-    private static final String msgWelcome = "--- Get Started\n";
-
     public static void main(String[] args) throws Exception {
-
 		String input;
 		String response;
 
-		System.out.println(Client.msgWelcome);
+		System.out.println("Enter name: ");
+		Scanner name = new Scanner(System.in);
+		String userName = name.nextLine();
 
 		BufferedReader inFromUser = new BufferedReader(new InputStreamReader(System.in));
-		Socket clientSocket = new Socket(Client.host, Client.port);
+		Socket clientSocket = new Socket("localhost", 9090);
 		DataOutputStream outToServer = new DataOutputStream(clientSocket.getOutputStream());
 		BufferedReader inFromServer = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
 
+		outToServer.writeBytes(userName + "\n");
 		do {
-			// Prompt user for select rock, paper or scissors ...
-			System.out.println("Select (1)Rock (2)Paper, (3)Scissors: ");
+			System.out.println("\nSelect (1)Rock (2)Paper, (3)Scissors: ");
 			input = inFromUser.readLine();
 		} while (!input.equals("1") && !input.equals("2") && !input.equals("3"));
 
-		// Transmit input to the server and provide some feedback for the user
 		outToServer.writeBytes(input + "\n");
 		System.out.println("\nYou have entered (" + input + ")");
 
-		// Catch responses
 		response = inFromServer.readLine();
-
-		// Display responses
 		System.out.println("Response from server: " + response);
-
-		// Close socket
 		clientSocket.close();
     }
 }
